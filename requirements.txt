@@ -1,13 +1,13 @@
 # Core ML / NLP
 torch>=2.0.0
-transformers>=4.35.0
+transformers==4.40.2
 datasets>=2.14.0
 accelerate>=0.24.0
 sentencepiece>=0.1.99
 
 # RLHF
-trl>=0.7.4
-peft>=0.6.0
+trl==0.8.6
+peft==0.10.0
 
 # UI
 gradio>=4.7.0
@@ -19,4 +19,4 @@ pandas>=2.0.0
 numpy>=1.24.0
 
 # Utilities
-bitsandbytes>=0.41.0   # optional: 8-bit quantization for CPU fallback
+bitsandbytes>=0.41.0
