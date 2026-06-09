@@ -1,0 +1,53 @@
+# ── Runtime outputs (large, not committed) ────────────────────────────────
+data/
+reward_model/
+ppo_model/
+ppo_model_merged/
+evaluation_results/
+
+# ── Python ────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── Jupyter ───────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ── Environments ─────────────────────────────────────────────────────────
+.env
+.venv
+venv/
+env/
+.python-version
+
+# ── IDE / OS ─────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Model weights (too large for GitHub) ─────────────────────────────────
+*.pt
+*.bin
+*.safetensors
+*.ckpt
+*.pth
+
+# ── Logs ─────────────────────────────────────────────────────────────────
+*.log
+wandb/
+runs/
+
+# ── Gradio temp ───────────────────────────────────────────────────────────
+gradio_cached_examples/
+flagged/
