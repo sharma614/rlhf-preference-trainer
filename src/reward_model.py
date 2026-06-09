@@ -1,27 +1,21 @@
-"""
-reward_model.py
-===============
-Bradley-Terry reward model built on top of GPT-2 Medium.
-"""
-
 import os
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from pathlib import Path
 from typing import Dict, List, Optional
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM
 
 
 class BradleyTerryRewardModel(nn.Module):
-    """GPT-2 Medium + a scalar linear reward head."""
+    """GPT-2 Medium backbone with a scalar linear reward head."""
 
     def __init__(self, model_name: str = "gpt2-medium", freeze_backbone: bool = False):
         super().__init__()
         self.backbone = AutoModelForCausalLM.from_pretrained(
             model_name, output_hidden_states=True
         )
-        hidden_size = self.backbone.config.n_embd  # 1024 for gpt2-medium
+        hidden_size = self.backbone.config.n_embd
         self.reward_head = nn.Linear(hidden_size, 1, bias=True)
         nn.init.normal_(self.reward_head.weight, std=0.02)
         nn.init.zeros_(self.reward_head.bias)
@@ -32,18 +26,18 @@ class BradleyTerryRewardModel(nn.Module):
 
     def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
         outputs = self.backbone(input_ids=input_ids, attention_mask=attention_mask)
-        hidden = outputs.hidden_states[-1]  # (B, T, H)
-        seq_len = attention_mask.sum(dim=1) - 1  # index of last real token
+        hidden = outputs.hidden_states[-1]
+        seq_len = attention_mask.sum(dim=1) - 1
         B = input_ids.shape[0]
-        last_h = hidden[torch.arange(B, device=input_ids.device), seq_len]  # (B, H)
-        return self.reward_head(last_h).squeeze(-1)  # (B,)
+        last_h = hidden[torch.arange(B, device=input_ids.device), seq_len]
+        return self.reward_head(last_h).squeeze(-1)
 
     def save_pretrained(self, save_dir: str) -> None:
         path = Path(save_dir)
         path.mkdir(parents=True, exist_ok=True)
         self.backbone.save_pretrained(str(path))
         torch.save(self.reward_head.state_dict(), str(path / "reward_head.pt"))
-        print(f"[reward_model] Saved to {save_dir}")
+        print(f"Saved to {save_dir}")
 
     @classmethod
     def from_pretrained(cls, save_dir: str, device: str = "cpu") -> "BradleyTerryRewardModel":
@@ -59,7 +53,6 @@ class BradleyTerryRewardModel(nn.Module):
 
 
 def bradley_terry_loss(r_chosen: torch.Tensor, r_rejected: torch.Tensor) -> torch.Tensor:
-    """−E[log σ(r_chosen − r_rejected)]"""
     return -F.logsigmoid(r_chosen - r_rejected).mean()
 
 
@@ -120,7 +113,7 @@ def train_reward_model(
 ) -> List[Dict]:
     if device is None:
         device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"[reward_model] Training on {device}")
+    print(f"Training on {device}")
 
     model = model.to(device)
     train_ds = PreferenceDataset(train_data, tokenizer, max_length)
@@ -153,7 +146,7 @@ def train_reward_model(
                 logs.append({"epoch": epoch + 1, "step": step, "loss": round(loss.item(), 4), "eval_acc": round(acc, 4)})
                 print(f"  E{epoch+1} S{step} | loss={loss.item():.4f} | eval_acc={acc:.4f}")
 
-        print(f"[reward_model] Epoch {epoch+1}/{num_epochs} done")
+        print(f"Epoch {epoch+1}/{num_epochs} done")
 
     model.save_pretrained(save_dir)
     import pandas as pd
@@ -161,8 +154,10 @@ def train_reward_model(
     return logs
 
 
-def score_response(model, tokenizer, prompt: str, response: str,
-                   max_length: int = 512, device: Optional[str] = None) -> float:
+def score_response(
+    model, tokenizer, prompt: str, response: str,
+    max_length: int = 512, device: Optional[str] = None
+) -> float:
     if device is None:
         device = str(next(model.parameters()).device)
     enc = tokenizer(f"{prompt}\n\n{response}", truncation=True, max_length=max_length, return_tensors="pt")
@@ -170,7 +165,3 @@ def score_response(model, tokenizer, prompt: str, response: str,
     with torch.no_grad():
         r = model(enc["input_ids"].to(device), enc["attention_mask"].to(device))
     return r.item()
-
-
-if __name__ == "__main__":
-    print("reward_model.py — loaded successfully (no smoke test run to save time)")
