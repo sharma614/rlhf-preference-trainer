@@ -23,6 +23,12 @@ A complete **Reinforcement Learning from Human Feedback (RLHF)** pipeline built 
 | **Disagreement categories** | 3 | Humor, length preference, ambiguous safety |
 | **Training time (T4 GPU)** | <2 hours | 200 PPO steps, batch size 8 |
 
+## 🖥️ Live Demo Interface
+
+Here is a preview of the interactive **Before/After Gradio comparison interface** (Notebook 05) where reviewers can test custom prompts and compare the base SFT model response vs. our RLHF-tuned model side-by-side with real-time reward model scoring:
+
+![Gradio Live Demo Interface](gradio_demo.png)
+
 ---
 
 ## 📂 Project Structure
@@ -116,7 +122,7 @@ rlhf-preference-trainer/
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/rlhf-preference-trainer.git
+git clone https://github.com/sharma614/rlhf-preference-trainer.git
 cd rlhf-preference-trainer
 
 # Create virtual environment
