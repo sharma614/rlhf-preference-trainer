@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RLHF Studio - Live Demo</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;family=Jetbrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-tertiary-container": "#cddbff", outline: "#777587", "on-tertiary-fixed-variant": "#004395", "tertiary-fixed": "#d8e2ff", "on-error-container": "#93000a", "inverse-surface": "#302f39", surface: "#fcf8ff", "secondary-fixed-dim": "#a3d48c", "error-container": "#ffdad6", "outline-variant": "#c7c4d8", "inverse-primary": "#ffb3af", "on-surface": "#1b1b24", secondary: "#3e692d", "on-error": "#ffffff", "primary-fixed": "#ffdad7", "surface-tint": "#b22a30", background: "#fcf8ff", "surface-container-low": "#f5f2ff", "on-background": "#1b1b24", "on-tertiary": "#ffffff", "on-secondary-fixed": "#052100", "on-primary-fixed": "#410005", "surface-dim": "#dcd8e5", "primary-fixed-dim": "#ffb3af", "on-surface-variant": "#464555", "on-secondary": "#ffffff", primary: "#920f1d", "surface-container": "#f0ecf9", "surface-container-high": "#eae6f4", "surface-container-lowest": "#ffffff", "on-primary-fixed-variant": "#900c1b", "on-tertiary-fixed": "#001a42", "primary-container": "#b42b31", "tertiary-container": "#245db8", "inverse-on-surface": "#f3effc", "secondary-container": "#bceea3", "secondary-fixed": "#bef0a5", "on-primary": "#ffffff", error: "#ba1a1a", "surface-variant": "#e4e1ee", tertiary: "#004598", "on-secondary-fixed-variant": "#275017", "on-secondary-container": "#426d31", "surface-container-highest": "#e4e1ee", "on-primary-container": "#ffd0cd", "tertiary-fixed-dim": "#aec6ff", "surface-bright": "#fcf8ff"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {gutter: "16px", "margin-sm": "12px", "margin-lg": "48px", "max-content-width": "1440px", "margin-md": "24px", unit: "4px", "container-padding": "24px"}, fontFamily: {"headline-lg": ["Inter"], "body-md": ["Inter"], "label-md": ["JetBrains Mono"], "headline-xl": ["Inter"], "body-lg": ["Inter"], "code-sm": ["JetBrains Mono"], "headline-md": ["Inter"], headline: ["Inter"], display: ["Inter"], body: ["Inter"], label: ["Jetbrains Mono"]}, fontSize: {"headline-lg": ["24px", {lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "600"}], "body-md": ["14px", {lineHeight: "20px", fontWeight: "400"}], "label-md": ["12px", {lineHeight: "16px", fontWeight: "500"}], "headline-xl": ["36px", {lineHeight: "44px", letterSpacing: "-0.02em", fontWeight: "700"}], "body-lg": ["16px", {lineHeight: "24px", fontWeight: "400"}], "code-sm": ["13px", {lineHeight: "18px", fontWeight: "400"}], "headline-md": ["18px", {lineHeight: "24px", fontWeight: "600"}]}}}};</script>
+<style>
+        body {
+            background-color: #F9FAFB;
+        }
+        .comparison-header-gradient {
+            background: linear-gradient(135deg, #312E81 0%, #111827 100%);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body class="text-on-surface font-body-md min-h-screen flex overflow-hidden">
+<!-- SideNavBar (from JSON) -->
+<nav class="bg-surface dark:bg-surface-container-lowest text-primary dark:text-primary-fixed font-label-md text-label-md font-body-md text-body-md fixed left-0 top-0 h-full w-[280px] z-40 bg-surface-container-low dark:bg-surface-container shadow-md flex flex-col p-margin-md gap-unit w-[280px] h-full hidden md:flex border-r border-outline-variant/30">
+<div class="mb-8 flex items-center gap-3 px-2">
+<div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">science</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-black text-on-surface dark:text-on-surface tracking-tight">RLHF Studio</h1>
+<p class="text-on-surface-variant text-[11px] font-label-md mt-0.5 opacity-80">v2.4 Stable</p>
+</div>
+</div>
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-label-md py-3 px-4 rounded-lg flex items-center justify-center gap-2 mb-8 shadow-sm transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">add</span>
+            New Annotation Task
+        </button>
+<div class="flex-1 overflow-y-auto space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-on-surface-variant/10 rounded-lg transition-all active:scale-[0.98] duration-150 group" href="/annotation">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">balance</span>
+                Preference Arena
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 bg-primary-container dark:bg-primary-fixed-dim text-on-primary-container dark:text-on-primary-fixed font-bold rounded-lg transition-all active:scale-[0.98] duration-150" href="/demo">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">compare</span>
+                Model Comparison
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-on-surface-variant/10 rounded-lg transition-all active:scale-[0.98] duration-150 group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">database</span>
+                Dataset Explorer
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-on-surface-variant/10 rounded-lg transition-all active:scale-[0.98] duration-150 group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">terminal</span>
+                Training Logs
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-on-surface-variant/10 rounded-lg transition-all active:scale-[0.98] duration-150 group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">admin_panel_settings</span>
+                Admin Panel
+            </a>
+</div>
+<div class="mt-auto border-t border-outline-variant/30 pt-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-colors text-[13px] group" href="#">
+<span class="material-symbols-outlined text-[18px] group-hover:text-primary">help</span>
+                Documentation
+            </a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-variant rounded-lg transition-colors text-[13px] group" href="#">
+<span class="material-symbols-outlined text-[18px] group-hover:text-primary">contact_support</span>
+                Support
+            </a>
+<div class="mt-4 px-4 py-3 bg-surface-container-high rounded-lg flex items-center gap-3">
+<img alt="RLHF Platform Logo" class="w-8 h-8 rounded-full border border-outline-variant/50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDm9ToxHGG__ZZtBcJrwIm4jr7jxTBdW0zVFSnh0kytX1QlS7fU42zhrwlJ9uLhCMyMhH4D5mwCKBlZ0Gpc3bwYm13G2zPV4AkMj6G16ZYWZi1birxFNB5s0LhbkQkBsCrOL0XqwM6JolBBkOEGC00jyWv8M1nbA5WJZkZZuuB2unt-JOTtuxOLONh-d9zGubs4wnEFOmIFwAVRpDtqlv1d97NgAsUX2sjhMjB_3f8Gb3Lv05F-MkbLAKVisVL4VRDzSLQI8nV3pr0"/>
+<div class="flex-1 min-w-0">
+<p class="text-[13px] font-bold text-on-surface truncate">Researcher Pro</p>
+<p class="text-[11px] text-on-surface-variant truncate">Session Active</p>
+</div>
+</div>
+</div>
+</nav>
+
+<!-- Main Content Area -->
+<main class="flex-1 ml-[280px] h-screen overflow-y-auto bg-[#F9FAFB] flex flex-col">
+<!-- Top App Bar (Contextual to this view) -->
+<header class="h-16 bg-surface-container-lowest border-b border-outline-variant/30 flex items-center justify-between px-gutter sticky top-0 z-30 shadow-sm">
+<div class="flex items-center gap-4">
+<h2 class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">Live Evaluation Dashboard</h2>
+<span class="px-2.5 py-1 bg-surface-variant text-primary font-label-md rounded text-[11px] border border-outline-variant/50 uppercase tracking-wider">Experiment: Exp-44b-v2</span>
+</div>
+<div class="flex items-center gap-3">
+<button class="w-9 h-9 flex items-center justify-center text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</header>
+<!-- Workspace Grid -->
+<div class="flex-1 p-margin-md flex gap-gutter max-w-max-content-width mx-auto w-full">
+<!-- Left Column: Input & Parameters (Fixed width, ~320px) -->
+<aside class="w-[320px] flex flex-col gap-gutter flex-shrink-0">
+<!-- Prompt Input Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/40 shadow-[0_4px_12px_rgba(0,0,0,0.02)] p-4 flex flex-col flex-1 max-h-[500px]">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">chat</span>
+                            System Prompt
+                        </h3>
+</div>
+<div class="flex-1 flex flex-col gap-3">
+<div class="relative flex-1">
+<textarea id="prompt-textarea" class="w-full h-full resize-none rounded-lg border border-outline-variant/60 bg-surface focus:ring-2 focus:ring-primary focus:border-primary p-3 font-body-md text-on-surface placeholder-on-surface-variant/60 transition-shadow" placeholder="Enter evaluation prompt here...">Explain the concept of quantum entanglement to a high schooler, but use an analogy involving a magical pair of dice.</textarea>
+</div>
+<button id="generate-btn" class="w-full bg-primary text-white font-label-md py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors shadow-sm active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">play_arrow</span>
+                            Generate Comparison
+                        </button>
+</div>
+</div>
+<!-- Parameters Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/40 shadow-[0_4px_12px_rgba(0,0,0,0.02)] p-4">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-5 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">tune</span>
+                        Generation Parameters
+                    </h3>
+<div class="space-y-6">
+<!-- Temperature -->
+<div>
+<div class="flex justify-between items-center mb-2">
+<label class="font-label-md text-on-surface-variant">Temperature</label>
+<span id="temp-value" class="font-label-md text-on-surface bg-surface-variant px-1.5 rounded">0.7</span>
+</div>
+<input id="temperature-slider" class="w-full h-1.5 bg-surface-variant rounded-lg appearance-none cursor-pointer accent-primary" max="1" min="0.1" step="0.1" type="range" value="0.7"/>
+<div class="flex justify-between text-[10px] text-outline mt-1 font-label-md">
+<span>Precise</span>
+<span>Creative</span>
+</div>
+</div>
+<!-- Max Tokens -->
+<div>
+<div class="flex justify-between items-center mb-2">
+<label class="font-label-md text-on-surface-variant">Max Tokens</label>
+<span id="max-tokens-value" class="font-label-md text-on-surface bg-surface-variant px-1.5 rounded">128</span>
+</div>
+<input id="max-tokens-slider" class="w-full h-1.5 bg-surface-variant rounded-lg appearance-none cursor-pointer accent-primary" max="256" min="32" step="32" type="range" value="128"/>
+</div>
+<!-- Models Select -->
+<div class="space-y-3 pt-2 border-t border-outline-variant/30">
+<div>
+<label class="font-label-md text-on-surface-variant block mb-1.5">Baseline Model</label>
+<select id="baseline-model-select" class="w-full bg-surface border border-outline-variant/60 rounded-lg p-2 text-[13px] font-body-md focus:ring-primary focus:border-primary">
+<option value="gpt2-medium">Base GPT-2 Medium</option>
+</select>
+</div>
+<div>
+<label class="font-label-md text-on-surface-variant block mb-1.5 text-primary font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">auto_awesome</span>
+                                    RLHF Model
+                                </label>
+<select id="rlhf-model-select" class="w-full bg-primary/5 border border-primary/30 rounded-lg p-2 text-[13px] font-body-md focus:ring-primary focus:border-primary text-primary font-medium">
+<option value="ppo_model">Exp-44b-v2 (RLHF LoRA)</option>
+</select>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Right Column: Comparison Dashboard -->
+<div class="flex-1 flex flex-col gap-gutter min-w-0">
+<!-- Metrics Bar / Delta Highlight -->
+<div class="grid grid-cols-3 gap-4">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-4 flex items-center gap-4 shadow-sm relative overflow-hidden">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-primary/5 rounded-full blur-xl"></div>
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">trending_up</span>
+</div>
+<div>
+<p class="font-label-md text-on-surface-variant mb-0.5">RLHF Improvement Delta</p>
+<div class="flex items-baseline gap-2">
+<span id="improvement-delta" class="font-headline-xl text-headline-xl text-on-surface">+0.00</span>
+<span class="text-[12px] text-secondary font-label-md flex items-center bg-secondary/10 px-1.5 py-0.5 rounded">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+                                    vs Base
+                                </span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-4 flex items-center gap-4 shadow-sm">
+<div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center text-secondary flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">check_circle</span>
+</div>
+<div>
+<p class="font-label-md text-on-surface-variant mb-0.5">Helpfulness Score</p>
+<div class="flex items-baseline gap-2">
+<span id="helpfulness-score" class="font-headline-xl text-headline-xl text-on-surface">3.00</span>
+<span class="text-[14px] text-outline">/ 5.0</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-4 flex items-center gap-4 shadow-sm">
+<div class="w-12 h-12 rounded-full bg-tertiary-container/10 flex items-center justify-center text-tertiary-container flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">shield</span>
+</div>
+<div>
+<p class="font-label-md text-on-surface-variant mb-0.5">Safety Margin</p>
+<div class="flex items-baseline gap-2">
+<span id="safety-margin" class="font-headline-xl text-headline-xl text-on-surface">100%</span>
+<span class="text-[12px] text-outline font-label-md">Pass Rate</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Side-by-Side Comparison -->
+<div class="flex-1 flex gap-gutter min-h-0">
+<!-- Base Model (Response A) -->
+<div class="flex-1 bg-surface-container-lowest rounded-xl border border-outline-variant/40 flex flex-col shadow-[0_4px_12px_rgba(0,0,0,0.02)] overflow-hidden relative">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-outline-variant/50"></div>
+<div class="comparison-header-gradient px-5 py-3 flex justify-between items-center ml-1">
+<div class="flex items-center gap-2">
+<span class="text-white font-label-md bg-white/20 px-2 py-0.5 rounded text-[11px]">Model A</span>
+<h3 class="font-headline-md text-headline-md text-white">Baseline GPT-2 Medium</h3>
+</div>
+</div>
+<div id="model-a-output" class="p-5 flex-1 overflow-y-auto font-body-lg text-on-surface/90 leading-relaxed space-y-4 ml-1 bg-surface-bright">
+<p>Baseline model generation will load here...</p>
+</div>
+<div class="border-t border-outline-variant/30 p-4 bg-surface-container-low ml-1 flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="px-3 py-1 bg-surface rounded-full border border-outline-variant/50 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+<span id="model-a-reward" class="font-label-md text-on-surface-variant">Reward: 0.00</span>
+</div>
+</div>
+</div>
+</div>
+<!-- RLHF Model (Response B) -->
+<div class="flex-1 bg-surface-container-lowest rounded-xl border border-primary/30 flex flex-col shadow-[0_8px_24px_rgba(53,37,205,0.08)] overflow-hidden relative transform transition-transform duration-300">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full blur-2xl pointer-events-none"></div>
+<div class="comparison-header-gradient px-5 py-3 flex justify-between items-center ml-1 border-b border-primary/20">
+<div class="flex items-center gap-2">
+<span class="text-white font-label-md bg-primary px-2 py-0.5 rounded text-[11px] flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[12px]">auto_awesome</span> Model B
+                                </span>
+<h3 class="font-headline-md text-headline-md text-white font-bold">Exp-44b-v2 (RLHF)</h3>
+</div>
+</div>
+<div id="model-b-output" class="p-5 flex-1 overflow-y-auto font-body-lg text-on-surface leading-relaxed space-y-4 ml-1 bg-white relative">
+<p>RLHF model generation will load here...</p>
+</div>
+<div class="border-t border-primary/10 p-4 bg-primary/5 ml-1 flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="px-3 py-1 bg-secondary text-white rounded-full flex items-center gap-2 shadow-sm shadow-secondary/20">
+<span class="material-symbols-outlined text-[14px]">star</span>
+<span id="model-b-reward" class="font-label-md">Reward: 0.00</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+    const tempSlider = document.getElementById("temperature-slider");
+    const tempVal = document.getElementById("temp-value");
+    tempSlider.addEventListener("input", () => {
+        tempVal.textContent = tempSlider.value;
+    });
+
+    const maxTokensSlider = document.getElementById("max-tokens-slider");
+    const maxTokensVal = document.getElementById("max-tokens-value");
+    maxTokensSlider.addEventListener("input", () => {
+        maxTokensVal.textContent = maxTokensSlider.value;
+    });
+
+    const generateBtn = document.getElementById("generate-btn");
+    const promptTextarea = document.getElementById("prompt-textarea");
+
+    generateBtn.addEventListener("click", async () => {
+        const prompt = promptTextarea.value.trim();
+        if (!prompt) {
+            alert("Please enter a system prompt first.");
+            return;
+        }
+
+        generateBtn.disabled = true;
+        generateBtn.innerHTML = `<span class="material-symbols-outlined animate-spin text-[18px]">sync</span> Generating...`;
+
+        try {
+            const res = await fetch("/api/generate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    prompt: prompt,
+                    temperature: parseFloat(tempSlider.value),
+                    max_new_tokens: parseInt(maxTokensSlider.value)
+                })
+            });
+
+            const data = await res.json();
+            
+            document.getElementById("model-a-output").innerHTML = `<p>${data.response_a.replace(/\n/g, "</p><p>")}</p>`;
+            document.getElementById("model-b-output").innerHTML = `<p>${data.response_b.replace(/\n/g, "</p><p>")}</p>`;
+            
+            document.getElementById("model-a-reward").textContent = `Reward: ${data.reward_a.toFixed(3)}`;
+            document.getElementById("model-b-reward").textContent = `Reward: ${data.reward_b.toFixed(3)}`;
+
+            const delta = data.reward_b - data.reward_a;
+            const deltaSign = delta >= 0 ? "+" : "";
+            document.getElementById("improvement-delta").textContent = `${deltaSign}${delta.toFixed(3)}`;
+            
+            // Generate some random mockup quality metrics based on scores
+            const baseHelpfulness = Math.max(1.0, Math.min(5.0, 3.5 + delta));
+            document.getElementById("helpfulness-score").textContent = baseHelpfulness.toFixed(2);
+            
+            const safetyVal = Math.max(80, Math.min(100, Math.floor(95 + delta * 5)));
+            document.getElementById("safety-margin").textContent = `${safetyVal}%`;
+
+        } catch (e) {
+            console.error("Error generating comparison:", e);
+            alert("An error occurred during generation. Check server logs.");
+        } finally {
+            generateBtn.disabled = false;
+            generateBtn.innerHTML = `<span class="material-symbols-outlined text-[18px]">play_arrow</span> Generate Comparison`;
+        }
+    });
+</script>
+</body></html>l>

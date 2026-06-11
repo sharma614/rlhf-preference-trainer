@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Human Preference Annotation</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;family=Jetbrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-tertiary-container": "#cddbff", outline: "#777587", "on-tertiary-fixed-variant": "#004395", "tertiary-fixed": "#d8e2ff", "on-error-container": "#93000a", "inverse-surface": "#302f39", surface: "#fcf8ff", "secondary-fixed-dim": "#a3d48c", "error-container": "#ffdad6", "outline-variant": "#c7c4d8", "inverse-primary": "#ffb3af", "on-surface": "#1b1b24", secondary: "#3e692d", "on-error": "#ffffff", "primary-fixed": "#ffdad7", "surface-tint": "#b22a30", background: "#fcf8ff", "surface-container-low": "#f5f2ff", "on-background": "#1b1b24", "on-tertiary": "#ffffff", "on-secondary-fixed": "#052100", "on-primary-fixed": "#410005", "surface-dim": "#dcd8e5", "primary-fixed-dim": "#ffb3af", "on-surface-variant": "#464555", "on-secondary": "#ffffff", primary: "#920f1d", "surface-container": "#f0ecf9", "surface-container-high": "#eae6f4", "surface-container-lowest": "#ffffff", "on-primary-fixed-variant": "#900c1b", "on-tertiary-fixed": "#001a42", "primary-container": "#b42b31", "tertiary-container": "#245db8", "inverse-on-surface": "#f3effc", "secondary-container": "#bceea3", "secondary-fixed": "#bef0a5", "on-primary": "#ffffff", error: "#ba1a1a", "surface-variant": "#e4e1ee", tertiary: "#004598", "on-secondary-fixed-variant": "#275017", "on-secondary-container": "#426d31", "surface-container-highest": "#e4e1ee", "on-primary-container": "#ffd0cd", "tertiary-fixed-dim": "#aec6ff", "surface-bright": "#fcf8ff"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {gutter: "16px", "margin-sm": "12px", "margin-lg": "48px", "max-content-width": "1440px", "margin-md": "24px", unit: "4px", "container-padding": "24px"}, fontFamily: {"headline-lg": ["Inter"], "body-md": ["Inter"], "label-md": ["JetBrains Mono"], "headline-xl": ["Inter"], "body-lg": ["Inter"], "code-sm": ["JetBrains Mono"], "headline-md": ["Inter"], headline: ["Inter"], display: ["Inter"], body: ["Inter"], label: ["Jetbrains Mono"]}, fontSize: {"headline-lg": ["24px", {lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "600"}], "body-md": ["14px", {lineHeight: "20px", fontWeight: "400"}], "label-md": ["12px", {lineHeight: "16px", fontWeight: "500"}], "headline-xl": ["36px", {lineHeight: "44px", letterSpacing: "-0.02em", fontWeight: "700"}], "body-lg": ["16px", {lineHeight: "24px", fontWeight: "400"}], "code-sm": ["13px", {lineHeight: "18px", fontWeight: "400"}], "headline-md": ["18px", {lineHeight: "24px", fontWeight: "600"}]}}}};</script>
+<style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #c7c4d8;
+            border-radius: 4px;
+        }
+        .bg-gradient-indigo {
+            background: linear-gradient(180deg, #1e1b4b 0%, #000000 100%);
+        }
+        .border-accent-a {
+            border-left: 4px solid #4F46E5;
+        }
+        .border-accent-b {
+            border-left: 4px solid #F59E0B;
+        }
+        /* Range slider styles */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #4f46e5;
+            cursor: pointer;
+            margin-top: -6px;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #dce2f3;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md h-full flex overflow-hidden">
+<!-- SideNavBar from JSON -->
+<nav class="fixed left-0 top-0 h-full w-[280px] z-40 bg-surface dark:bg-surface-container-lowest bg-surface-container-low dark:bg-surface-container shadow-md flex flex-col p-margin-md gap-unit w-[280px] h-full hidden md:flex">
+<!-- Header -->
+<div class="mb-margin-md flex flex-col gap-2">
+<h1 class="font-headline-md text-headline-md font-black text-on-surface dark:text-on-surface">RLHF Studio</h1>
+<span class="font-label-md text-label-md text-on-surface-variant">v2.4 Stable</span>
+</div>
+<!-- CTA -->
+<button class="w-full bg-primary-container text-on-primary-container py-2 px-4 rounded-lg font-body-md text-body-md font-medium shadow-sm hover:opacity-90 active:scale-[0.98] transition-all mb-margin-md flex items-center justify-center gap-2">
+<i class="ph-duotone ph-plus-circle text-[18px]"></i>
+            New Annotation Task
+        </button>
+<!-- Navigation Links -->
+<div class="flex flex-col gap-1 flex-grow">
+<!-- Active State: Preference Arena (closest match for Human Preference Annotation) -->
+<a class="flex items-center gap-3 px-3 py-2 bg-primary-container dark:bg-primary-fixed-dim text-on-primary-container dark:text-on-primary-fixed font-bold rounded-lg active:scale-[0.98] transition-transform duration-150" href="/annotation">
+<i class="ph-duotone ph-scales text-[20px]"></i>
+<span class="font-label-md text-label-md">Preference Arena</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-on-surface-variant/10 rounded-lg hover:bg-surface-variant dark:hover:bg-surface-container-high transition-all active:scale-[0.98] transition-transform duration-150" href="/demo">
+<i class="ph-duotone ph-git-diff text-[20px]"></i>
+<span class="font-label-md text-label-md">Model Comparison</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-on-surface-variant/10 rounded-lg hover:bg-surface-variant dark:hover:bg-surface-container-high transition-all active:scale-[0.98] transition-transform duration-150" href="#">
+<i class="ph-duotone ph-database text-[20px]"></i>
+<span class="font-label-md text-label-md">Dataset Explorer</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-on-surface-variant/10 rounded-lg hover:bg-surface-variant dark:hover:bg-surface-container-high transition-all active:scale-[0.98] transition-transform duration-150" href="#">
+<i class="ph-duotone ph-terminal-window text-[20px]"></i>
+<span class="font-label-md text-label-md">Training Logs</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-on-surface-variant/10 rounded-lg hover:bg-surface-variant dark:hover:bg-surface-container-high transition-all active:scale-[0.98] transition-transform duration-150" href="#">
+<i class="ph-duotone ph-shield-gear text-[20px]"></i>
+<span class="font-label-md text-label-md">Admin Panel</span>
+</a>
+</div>
+<!-- Footer Links -->
+<div class="flex flex-col gap-1 mt-auto pt-4 border-t border-outline-variant">
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-on-surface-variant/10 rounded-lg transition-all" href="#">
+<i class="ph-duotone ph-question text-[20px]"></i>
+<span class="font-label-md text-label-md">Documentation</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-on-surface-variant/10 rounded-lg transition-all" href="#">
+<i class="ph-duotone ph-headset text-[20px]"></i>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+</div>
+</nav>
+<!-- Main Workspace Canvas -->
+<main class="flex-1 ml-[280px] h-full overflow-y-auto custom-scrollbar flex flex-col items-center bg-background">
+<!-- Max width container for fluid hybrid grid -->
+<div class="w-full max-w-max-content-width mx-auto px-margin-md py-margin-lg flex flex-col gap-6">
+<!-- Top Header & Progress -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm w-full">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-background mb-1">Human Preference Annotation</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Task ID: #4928-ALPHA | Domain: General Knowledge</p>
+</div>
+<div class="flex flex-col items-end gap-2 w-full md:w-auto">
+<div class="flex items-center gap-2">
+<span class="font-label-md text-label-md text-on-surface-variant">Progress</span>
+<span class="font-label-md text-label-md text-primary font-bold" id="progress-text">0 / 1200</span>
+</div>
+<div class="w-full md:w-48 h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary" id="progress-bar" style="width: 0%"></div>
+</div>
+</div>
+</div>
+<!-- User Prompt Section -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-[0_4px_4px_rgba(0,0,0,0.05)] overflow-hidden w-full">
+<div class="bg-surface-container px-6 py-3 border-b border-outline-variant flex items-center gap-3">
+<img alt="User" class="w-6 h-6 rounded-full object-cover shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_eRes8LRrA99eBVBxvQ0y0OFJ_Xqe2nLT0pITlV7K6LIoQoOhpurG0PzMwfidh9dBS3yLR7hZ5ZBvlzmNxm-1-NtOIywaFxjcDzmWn7qNutomu0rn3FNSaQX3eLhqTe1RjoHCoInEZp9S5lIsheeRaTWKlXqfbaOk4XJ0hfyNeByCQzDE8883WmCGJ204hAmtZCaBCPw1ebewP8FkjIGCfJBCySF5eBB-G1DMQ7EcYVwxNjTnnIjzyaT_Rzxo0BT5OiC8Ojlya68"/>
+<h3 class="font-headline-md text-headline-md text-on-surface">User Prompt</h3>
+</div>
+<div class="p-6">
+<p class="font-body-lg text-body-lg text-on-surface leading-relaxed" id="prompt-text">
+                        Loading prompt...
+                    </p>
+</div>
+</div>
+<!-- Side-by-Side Comparison Workspace -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter w-full">
+<!-- Response A Card -->
+<div class="flex flex-col bg-surface-container-lowest rounded-xl border border-outline-variant shadow-[0_4px_4px_rgba(0,0,0,0.05)] overflow-hidden border-accent-a h-full">
+<div class="bg-gradient-indigo px-4 py-3 flex items-center justify-between border-b border-outline-variant text-on-primary">
+<div class="flex items-center gap-2">
+<i class="ph-duotone ph-robot text-[20px]"></i>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider">Model A</span>
+</div>
+<button class="text-on-primary/70 hover:text-on-primary transition-colors">
+<i class="ph-duotone ph-copy text-[18px]"></i>
+</button>
+</div>
+<div class="p-6 flex-1 overflow-y-auto custom-scrollbar">
+<div class="font-body-md text-body-md text-on-surface space-y-4" id="response-a-text">
+    Loading response A...
+</div>
+</div>
+</div>
+<!-- Response B Card -->
+<div class="flex flex-col bg-surface-container-lowest rounded-xl border border-outline-variant shadow-[0_4px_4px_rgba(0,0,0,0.05)] overflow-hidden border-accent-b h-full">
+<div class="bg-gradient-indigo px-4 py-3 flex items-center justify-between border-b border-outline-variant text-on-primary">
+<div class="flex items-center gap-2">
+<i class="ph-duotone ph-robot text-[20px] text-[#F59E0B]"></i>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider text-[#F59E0B]">Model B</span>
+</div>
+<button class="text-on-primary/70 hover:text-on-primary transition-colors">
+<i class="ph-duotone ph-copy text-[18px]"></i>
+</button>
+</div>
+<div class="p-6 flex-1 overflow-y-auto custom-scrollbar">
+<div class="font-body-md text-body-md text-on-surface space-y-4" id="response-b-text">
+    Loading response B...
+</div>
+</div>
+</div>
+</div> <!-- End Side-by-Side -->
+<!-- Evaluation Tools Area -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-6 w-full flex flex-col gap-6">
+<h3 class="font-headline-md text-headline-md text-on-surface border-b border-outline-variant pb-2">Evaluation Metrics</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Left Column: Dimensions -->
+<div class="flex flex-col gap-5">
+<!-- Dimension 1 -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-center">
+<label class="font-label-md text-label-md text-on-surface">Helpfulness</label>
+<span class="font-code-sm text-code-sm text-on-surface-variant" id="helpfulness-label">Neutral</span>
+</div>
+<input class="w-full" max="5" min="1" type="range" value="3" id="helpfulness-slider"/>
+<div class="flex justify-between font-code-sm text-[10px] text-outline mt-1">
+<span>Poor</span>
+<span>Excellent</span>
+</div>
+</div>
+<!-- Dimension 2 -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-center">
+<label class="font-label-md text-label-md text-on-surface">Factuality</label>
+<span class="font-code-sm text-code-sm text-on-surface-variant" id="factuality-label">Neutral</span>
+</div>
+<input class="w-full" max="5" min="1" type="range" value="3" id="factuality-slider"/>
+<div class="flex justify-between font-code-sm text-[10px] text-outline mt-1">
+<span>Poor</span>
+<span>Excellent</span>
+</div>
+</div>
+</div>
+<!-- Right Column: Dimensions -->
+<div class="flex flex-col gap-5">
+<!-- Dimension 3 -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-center">
+<label class="font-label-md text-label-md text-on-surface">Safety</label>
+<span class="font-code-sm text-code-sm text-on-surface-variant" id="safety-label">Neutral</span>
+</div>
+<input class="w-full" max="5" min="1" type="range" value="3" id="safety-slider"/>
+<div class="flex justify-between font-code-sm text-[10px] text-outline mt-1">
+<span>Poor</span>
+<span>Excellent</span>
+</div>
+</div>
+<!-- Dimension 4 -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-center">
+<label class="font-label-md text-label-md text-on-surface">Fluency</label>
+<span class="font-code-sm text-code-sm text-on-surface-variant" id="fluency-label">Neutral</span>
+</div>
+<input class="w-full" max="5" min="1" type="range" value="3" id="fluency-slider"/>
+<div class="flex justify-between font-code-sm text-[10px] text-outline mt-1">
+<span>Poor</span>
+<span>Excellent</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Preference Selector & Submit -->
+<div class="mt-6 pt-6 border-t border-outline-variant flex flex-col items-center gap-6">
+<h4 class="font-headline-md text-headline-md text-on-surface">Overall Preference</h4>
+<div class="flex gap-4">
+<button id="btn-pref-a" class="px-6 py-3 border border-outline-variant rounded-lg font-body-md text-body-md font-medium text-on-surface hover:bg-surface-variant transition-colors flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-[#4F46E5]"></span>
+                            A is Better
+                        </button>
+<button id="btn-pref-tie" class="px-6 py-3 border border-outline-variant rounded-lg font-body-md text-body-md font-medium text-on-surface hover:bg-surface-variant transition-colors flex items-center gap-2">
+                            Tie / Unsure
+                        </button>
+<button id="btn-pref-b" class="px-6 py-3 border border-outline-variant rounded-lg font-body-md text-body-md font-medium text-on-surface hover:bg-surface-variant transition-colors flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-[#F59E0B]"></span>
+                            B is Better
+                        </button>
+</div>
+<div class="flex gap-4 mt-4">
+<button id="submit-annotation-btn" class="bg-primary-container text-on-primary-container px-8 py-3 rounded-lg font-body-md text-body-md font-bold shadow-sm hover:opacity-90 active:scale-[0.98] transition-all flex items-center gap-2">
+                        Submit Annotation
+                        <i class="ph-duotone ph-paper-plane-tilt text-[18px]"></i>
+</button>
+<button id="skip-annotation-btn" class="border border-outline-variant px-8 py-3 rounded-lg font-body-md text-body-md font-bold shadow-sm hover:bg-surface-variant active:scale-[0.98] transition-all flex items-center gap-2">
+                        Skip Pair
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+    const labels = {
+        1: "Poor",
+        2: "Slightly Bad",
+        3: "Neutral",
+        4: "Good",
+        5: "Excellent"
+    };
+
+    const sliders = ["helpfulness", "factuality", "safety", "fluency"];
+    sliders.forEach(s => {
+        const slider = document.getElementById(`${s}-slider`);
+        const label = document.getElementById(`${s}-label`);
+        slider.addEventListener("input", () => {
+            label.textContent = labels[slider.value];
+        });
+    });
+
+    let preferred = null;
+    const btnA = document.getElementById("btn-pref-a");
+    const btnTie = document.getElementById("btn-pref-tie");
+    const btnB = document.getElementById("btn-pref-b");
+
+    function setPreference(choice) {
+        preferred = choice;
+        [btnA, btnTie, btnB].forEach(btn => {
+            btn.classList.remove("bg-primary", "text-white", "border-primary", "font-bold");
+        });
+        if (choice === 'A') {
+            btnA.classList.add("bg-primary", "text-white", "border-primary", "font-bold");
+        } else if (choice === 'Tie') {
+            btnTie.classList.add("bg-primary", "text-white", "border-primary", "font-bold");
+        } else if (choice === 'B') {
+            btnB.classList.add("bg-primary", "text-white", "border-primary", "font-bold");
+        }
+    }
+
+    btnA.addEventListener("click", () => setPreference('A'));
+    btnTie.addEventListener("click", () => setPreference('Tie'));
+    btnB.addEventListener("click", () => setPreference('B'));
+
+    let currentPrompt = "";
+    let currentRespA = "";
+    let currentRespB = "";
+
+    async function loadNextPair() {
+        try {
+            const res = await fetch("/api/current_pair");
+            const data = await res.json();
+            
+            currentPrompt = data.prompt;
+            currentRespA = data.response_a;
+            currentRespB = data.response_b;
+
+            document.getElementById("prompt-text").textContent = data.prompt;
+            document.getElementById("response-a-text").innerHTML = data.response_a.replace(/\n/g, "<br>");
+            document.getElementById("response-b-text").innerHTML = data.response_b.replace(/\n/g, "<br>");
+            
+            document.getElementById("progress-text").textContent = `${data.count} / 1200`;
+            const pct = Math.min(100, Math.floor((data.count / 1200) * 100));
+            document.getElementById("progress-bar").style.width = `${pct}%`;
+
+            // Reset scores & preference
+            preferred = null;
+            [btnA, btnTie, btnB].forEach(btn => {
+                btn.classList.remove("bg-primary", "text-white", "border-primary", "font-bold");
+            });
+            sliders.forEach(s => {
+                document.getElementById(`${s}-slider`).value = 3;
+                document.getElementById(`${s}-label`).textContent = "Neutral";
+            });
+        } catch (e) {
+            console.error("Error loading current pair", e);
+        }
+    }
+
+    document.getElementById("submit-annotation-btn").addEventListener("click", async () => {
+        if (!preferred) {
+            alert("Please select overall preference (A, B, or Tie) first.");
+            return;
+        }
+        const payload = {
+            prompt: currentPrompt,
+            response_a: currentRespA,
+            response_b: currentRespB,
+            preferred: preferred,
+            helpfulness_score: parseInt(document.getElementById("helpfulness-slider").value),
+            factuality_score: parseInt(document.getElementById("factuality-slider").value),
+            safety_score: parseInt(document.getElementById("safety-slider").value),
+            fluency_score: parseInt(document.getElementById("fluency-slider").value)
+        };
+
+        try {
+            const res = await fetch("/api/submit_annotation", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            const result = await res.json();
+            if (result.status === "success") {
+                loadNextPair();
+            } else {
+                alert("Error: " + result.message);
+            }
+        } catch (e) {
+            console.error("Error submitting annotation", e);
+        }
+    });
+
+    document.getElementById("skip-annotation-btn").addEventListener("click", async () => {
+        try {
+            const res = await fetch("/api/skip_pair", { method: "POST" });
+            const result = await res.json();
+            if (result.status === "success") {
+                loadNextPair();
+            }
+        } catch (e) {
+            console.error("Error skipping pair", e);
+        }
+    });
+
+    window.addEventListener("DOMContentLoaded", loadNextPair);
+</script>
+</body></html>
